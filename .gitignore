@@ -1,0 +1,18 @@
+# OS X
+.DS_Store
+Icon?
+
+# Windows
+Thumbs.db
+ethumbs.db
+Desktop.ini
+
+# Linux
+.directory
+*~
+
+# Vim
+*.swp
+
+a.out
+input
