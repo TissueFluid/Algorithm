@@ -12,8 +12,6 @@ struct TreeNode {
 
 TreeNode *buildTree(vector<int> &preorder, int pre_start, int pre_end,
                     vector<int> &inorder, int in_start, int in_end) {
-    TreeNode *node = new TreeNode(preorder[pre_start]);
-
     if (pre_start > pre_end || in_start > in_end) {
         return NULL;
     }
@@ -24,6 +22,12 @@ TreeNode *buildTree(vector<int> &preorder, int pre_start, int pre_end,
             break;
         }
     }
+
+    if (position > in_end) {
+        return NULL;
+    }
+
+    TreeNode *node = new TreeNode(preorder[pre_start]);
 
     node->left = buildTree(
         preorder, pre_start + 1, pre_start + position - in_start,
