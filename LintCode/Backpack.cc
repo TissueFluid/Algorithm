@@ -1,5 +1,7 @@
 // Backpack - DP
 
+// f[i][S] = f[i-1][S - A[i]] or f[i-1][S]
+
 #include <iostream>
 #include <vector>
 using namespace std;
@@ -16,9 +18,7 @@ int backPack(int m, vector<int> A) {
 
     for (int i = 0; i < sizeA; ++i) {
         for (int j = m; j >= A[i]; j--) {
-            if (canPack[j - A[i]]) {
-                canPack[j] = true;
-            }
+            canPack[j] = canPack[j] || canPack[j - A[i]];
         }
     }
 

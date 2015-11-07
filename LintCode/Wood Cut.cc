@@ -24,7 +24,7 @@ int woodCut(vector<int> L, int k) {
 
   long long left = 0;
   long long right = max + 1;
-  long long mid = (left >> 1) + (right >> 1);
+  long long mid = (left + right) / 2;
 
   while (left < mid) {
     auto tmp = 0;
