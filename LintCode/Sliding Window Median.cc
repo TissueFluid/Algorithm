@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <vector>
-#include <queue>
+#include <set>
 using namespace std;
 
 class Solution {
@@ -19,15 +19,37 @@ public:
             return result;
         }
 
-        priority_queue<int> pq;
+        multiset<int, less<int>> min_set;
+        multiset<int, greater<int>> max_set;
 
-        for (int i = 0; i < k; ++i) {
-            pq.push(nums[i]);
-        }
+        for (int i = 0; i < size; ++i) {
+            if (i >= k) {
+                auto found = max_set.find(nums[i - k]);
+                if (found != max_set.cend()) {
+                    max_set.erase(found);
+                } else {
+                    min_set.erase(min_set.find(nums[i - k]));
+                }
+            }
 
-        result.push_back((&pq.top())[k / 2]);
+            if (max_set.empty() || nums[i] > *max_set.cbegin()) {
+                min_set.insert(nums[i]);
+            } else {
+                max_set.insert(nums[i]);
+            }
 
-        for (int i = k; i < size; ++i) {
+            while (!min_set.empty() && min_set.size() > max_set.size()) {
+                max_set.insert(*min_set.cbegin());
+                min_set.erase(min_set.cbegin());
+            }
+            while (!max_set.empty() && max_set.size() > min_set.size() + 1) {
+                min_set.insert(*max_set.cbegin());
+                max_set.erase(max_set.cbegin());
+            }
+
+            if (i >= k - 1) {
+                result.push_back(*max_set.cbegin());
+            }
         }
 
         return result;

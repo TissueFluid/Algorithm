@@ -3,7 +3,7 @@
 // can rotate
 // result = max(globalMax, sum - globalMin)
 
-// Mind the aLl negative case.
+// Pay attention to the all negative case.
 
 #include <iostream>
 #include <vector>
