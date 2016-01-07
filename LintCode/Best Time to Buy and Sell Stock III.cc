@@ -36,7 +36,7 @@ public:
         for (int i = size - 2; i >= 0; i--) {
             maximum = max(maximum, prices[i]);
             rightMax = max(rightMax, maximum - prices[i]);
-            result = max(result, leftMax[i - 1] + rightMax);
+            result = max(result, leftMax[i] + rightMax);
         }
 
         return result;
