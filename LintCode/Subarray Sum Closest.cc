@@ -17,13 +17,17 @@ using namespace std;
 struct Sum{
   int sum;
   int index;
+  Sum(){}
   Sum(int sum, int index) {
     this->sum = sum;
     this->index = index;
   }
-  static bool cmp(Sum a, Sum b) {
+  bool operator () (Sum &a, Sum &b) {
     return a.sum < b.sum;
   }
+  /* static bool cmp(Sum a, Sum b) { */
+  /*   return a.sum < b.sum; */
+  /* } */
 };
 
 vector<int> subarraySumClosest(vector<int> nums){
@@ -45,7 +49,8 @@ vector<int> subarraySumClosest(vector<int> nums){
     sum.push_back(Sum(nums[i] + sum.back().sum, i));
   }
 
-  sort(sum.begin(), sum.end(), Sum::cmp);
+  /* sort(sum.begin(), sum.end(), Sum::cmp); */
+  sort(sum.begin(), sum.end(), Sum());
 
   auto closest = numeric_limits<unsigned>::max();
   auto index = 0;

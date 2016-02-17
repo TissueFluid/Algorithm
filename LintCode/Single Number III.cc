@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <vector>
+#include <limits>
 
 using namespace std;
 
@@ -40,7 +41,8 @@ vector<int> singleNumberIII(vector<int> &A) {
 
 int main(int argc, char const* argv[])
 {
-  int a[] = {1, 2, 2, 3, 4, 4, 5, 3};
+  /* int a[] = {1, 2, 2, 3, 4, 4, 5, 3}; */
+  int a[] = {-1, -2, -2, numeric_limits<int>::max()};
   vector<int> v(a, a + sizeof(a) / sizeof(int));
 
   auto result = singleNumberIII(v);
