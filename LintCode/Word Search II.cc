@@ -1,146 +1,95 @@
-// Word Search II - Trie
-
-#include <iostream>
-#include <vector>
-#include <string>
-#include <unordered_map>
-#include <unordered_set>
-#include <stack>
-
-using namespace std;
-
-struct TreeNode {
+struct TrieNode {
     bool isEnd;
-    string value;
-    unordered_map<char, TreeNode *> children;
+    TrieNode *children[26];
 
-    TreeNode() {
-        this->isEnd = false;
+    TrieNode() {
+        isEnd = false;
+        memset(children, 0, sizeof(children));
     }
 };
 
 class Trie {
-protected:
-    TreeNode *root;
-
-    void dfs(vector<vector<char> > &board,
-             int x, int y, TreeNode *root,
-             unordered_set<string> &result) {
-        static auto height = board.size();
-        static auto width = board[0].size();
-
-        if (x < 0 || y < 0 || x >= height || y >= width) {
-            return;
-        }
-
-        if (board[x][y] == 0) {
-            return;
-        }
-
-        auto found = root->children.find(board[x][y]);
-        if (found == root->children.end()) {
-            return;
-        }
-
-        if (found->second->isEnd == true) {
-            result.insert(found->second->value);
-        }
-
-        auto origin = board[x][y];
-
-        board[x][y] = 0;
-
-        dfs(board, x, y + 1, found->second, result);
-        dfs(board, x, y - 1, found->second, result);
-        dfs(board, x + 1, y, found->second, result);
-        dfs(board, x - 1, y, found->second, result);
-
-        board[x][y] = origin;
-    }
-
 public:
     Trie() {
-        this->root = new TreeNode();
+        root = new TrieNode();
     }
 
-    ~Trie() {
-        stack<TreeNode *> s;
-
-        s.push(this->root);
-
-        while (!s.empty()) {
-            auto top = s.top();
-            s.pop();
-
-            for (const auto &key_and_value: top->children) {
-                s.push(key_and_value.second);
+    void Insert(const string &word) {
+        auto p = root;
+        for (const auto &ch : word) {
+            if (p->children[ch - 'a'] == NULL) {
+                p->children[ch - 'a'] = new TrieNode();
             }
-
-            delete top;
-        }
-    }
-
-    void Insert(string str) {
-        TreeNode *p = root;
-        for (const auto ch : str) {
-            if (p->children.find(ch) == p->children.end()) {
-                p->children[ch] = new TreeNode();
-            }
-            p = p->children[ch];
+            p = p->children[ch - 'a'];
         }
         p->isEnd = true;
-        p->value = str;
     }
 
     void Search(vector<vector<char> > &board, vector<string> &result) {
-        auto height = board.size();
-
-        if (height == 0) {
-            return;
-        }
-
-        auto width = board[0].size();
-
-        unordered_set<string> s;
+        const int height = board.size();
+        const int width = board[0].size();
 
         for (int i = 0; i < height; ++i) {
             for (int j = 0; j < width; ++j) {
-                this->dfs(board, i, j, this->root, s);
+                dfs(board, root, i, j, result);
             }
         }
+    }
 
-        result.assign(s.begin(), s.end());
+protected:
+    TrieNode *root;
+
+    void dfs(vector<vector<char> > &board, TrieNode *p, int x, int y,
+             vector<string> &result) {
+        static string tmp("");
+
+        if (p->isEnd == true) {
+            result.push_back(tmp);
+            p->isEnd = false;
+        }
+
+        if (x < 0 || y < 0 || x >= board.size() || y >= board[0].size()) {
+            return;
+        }
+
+        if (board[x][y] == '\0') {
+            return;
+        }
+
+        auto nextp = p->children[board[x][y] - 'a'];
+        if (nextp == NULL) {
+            return;
+        }
+
+        tmp.push_back(board[x][y]);
+        auto backup = board[x][y];
+        board[x][y] = '\0';
+        dfs(board, nextp, x + 1, y, result);
+        dfs(board, nextp, x - 1, y, result);
+        dfs(board, nextp, x, y + 1, result);
+        dfs(board, nextp, x, y - 1, result);
+        board[x][y] = backup;
+        tmp.pop_back();
     }
 };
 
-vector<string> wordSearchII(vector<vector<char> > &board, vector<string> &words) {
-    Trie trie;
+class Solution {
+public:
+    vector<string> findWords(vector<vector<char>>& board, vector<string>& words) {
+        if (board.size() == 0 || board[0].size() == 0 || words.size() == 0) {
+            return {};
+        }
 
-    for (const auto &word : words) {
-        trie.Insert(word);
+        Trie trie;
+
+        for (const auto &word : words) {
+            trie.Insert(word);
+        }
+
+        vector<string> result;
+
+        trie.Search(board, result);
+
+        return result;
     }
-
-    vector<string> result;
-
-    trie.Search(board, result);
-
-    return result;
-}
-
-int main() {
-    vector<vector<char> > board = {
-        {'d', 'o', 'a', 'f'},
-        {'a', 'g', 'a', 'i'},
-        {'d', 'c', 'a', 'n'}
-    };
-
-    vector<string> words = {"dog", "dad", "dgdg", "can", "again"};
-
-    auto result = wordSearchII(board, words);
-
-    for (const auto &item : result) {
-        cout << item << endl;
-    }
-
-    return 0;
-}
+};

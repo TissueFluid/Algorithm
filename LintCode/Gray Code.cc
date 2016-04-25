@@ -21,41 +21,22 @@
 using namespace std;
 
 class Solution {
-private:
-    void helper(int n, vector<int> &result) {
-        if (n == 0) {
-            result.push_back(0);
-            return;
-        }
-
-        helper(n - 1, result);
-
-        const int size_result = result.size();
-
-        for (int i = size_result - 1; i >= 0; --i) {
-            result.push_back((1 << (n - 1)) + result[i]);
-        }
-    }
 public:
-    /**
-     * @param n a number
-     * @return Gray code
-     */
     vector<int> grayCode(int n) {
-        vector<int> result;
+        if (n < 0) {
+            return {};
+        }
 
-        helper(n, result);
+        vector<int> result({0});
+
+        for (int i = 1; i <= n; ++i) {
+            const int size = result.size();
+
+            for (int j = size - 1; j >= 0; --j) {
+                result.push_back(result[j] | (1 << (i-1)));
+            }
+        }
+
         return result;
     }
 };
-
-int main() {
-    Solution s;
-
-    auto res = s.grayCode(1);
-
-    for (const auto &item : res) {
-        cout << item << endl;
-    }
-    return 0;
-}

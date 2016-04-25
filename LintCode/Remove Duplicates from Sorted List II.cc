@@ -1,45 +1,41 @@
-// Remove Duplicates from Sorted List II
-
-#include <iostream>
-using namespace std;
-
-class ListNode {
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
 public:
-    int val;
-    ListNode *next;
-    ListNode(int val) {
-        this->val = val;
-        this->next = NULL;
+    ListNode* deleteDuplicates(ListNode* head) {
+        if (head == NULL || head->next == NULL) {
+            return head;
+        }
+
+        ListNode *dummy = new ListNode(0);
+        ListNode *last = dummy;
+
+        ListNode *p = head;
+
+        while (p && p->next) {
+            if (p->val != p->next->val) {
+                last->next = p;
+                last = p;
+                p = p->next;
+            } else {
+                auto same = p->val;
+                do {
+                    auto tmp = p;
+                    p = p->next;
+                    delete tmp;
+                } while (p && p->val == same);
+            }
+        }
+
+        last->next = p;
+
+        auto ret = dummy->next;
+        return ret;
     }
 };
-
-void *deleteNextNode(ListNode *node) {
-    ListNode *tmp = node->next;
-    node->next = node->next->next;
-    delete tmp;
-}
-
-ListNode *deleteDuplicates(ListNode *head) {
-    if (head == NULL) {
-        return head;
-    }
-
-    ListNode *dummy = new ListNode(0);
-    dummy->next = head;
-
-    for (auto p = dummy; p->next && p->next->next; ) {
-        if (p->next->val == p->next->next->val) {
-            for (auto q = p->next->next; q && q->val == p->next->val; q = q->next) {
-                deleteNextNode(p->next);
-            }
-            deleteNextNode(p);
-        } else {
-            p = p->next;
-        }
-    }
-
-    ListNode *ret = dummy->next;
-    delete dummy;
-
-    return ret;
-}

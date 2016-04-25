@@ -5,6 +5,50 @@
 using namespace std;
 
 class Solution {
+    void helper(int start, const string &digits,
+                vector<string> &result,
+                const unordered_map<char, string> &m) {
+        static string tmp("");
+
+        if (start == (int)digits.length()) {
+            result.push_back(tmp);
+            return;
+        }
+
+        for (const auto &ch : m.at(digits[start])) {
+            tmp.push_back(ch);
+            helper(start + 1, digits, result, m);
+            tmp.pop_back();
+        }
+    }
+public:
+    vector<string> letterCombinations(string digits) {
+        const int len = digits.length();
+        if (digits.empty() || len == 0) {
+            return {};
+        }
+
+        vector<string> result;
+
+        const unordered_map<char, string> m = {
+            {'2', "abc"},
+            {'3', "def"},
+            {'4', "ghi"},
+            {'5', "jkl"},
+            {'6', "mno"},
+            {'7', "pqrs"},
+            {'8', "tuv"},
+            {'9', "wxyz"}
+        };
+
+        helper(0, digits, result, m);
+
+        return result;
+    }
+};
+
+
+class Solution2 {
 public:
     vector<string> letterCombinations(string digits) {
         const int len = digits.length();

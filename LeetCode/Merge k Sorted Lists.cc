@@ -16,7 +16,7 @@ struct ListNode {
 class Solution1 {
 public:
     ListNode* mergeKLists(vector<ListNode*>& lists) {
-        auto cmp = [](ListNode *a, ListNode *b) {
+        auto cmp = [](ListNode *a, ListNode *b)->bool {
             return a->val > b->val;
         };
         priority_queue<ListNode *, vector<ListNode *>, decltype(cmp)> heap(cmp);
@@ -44,6 +44,44 @@ public:
 
         return ret;
     }
+};
+
+class Solution {
+public:
+  ListNode *mergeKLists(vector<ListNode *> &lists) {
+    ListNode *dummy = new ListNode(0);
+    ListNode *tail = dummy;
+
+    vector<ListNode *> heap;
+    for (const auto &list : lists) {
+      if (list) {
+        heap.push_back(list);
+      }
+    }
+
+    auto cmp = [](const ListNode *a, const ListNode *b)->bool {
+      return a->val > b->val;
+    };
+
+    make_heap(heap.begin(), heap.end(), cmp);
+
+    while (!heap.empty()) {
+      tail->next = heap.front();
+      tail = tail->next;
+      pop_heap(heap.begin(), heap.end(), cmp);
+      heap.pop_back();
+      if (tail->next) {
+        heap.push_back(tail->next);
+        push_heap(heap.begin(), heap.end(), cmp);
+      }
+    }
+
+    auto ret = dummy->next;
+    delete dummy;
+
+
+    return ret;
+  }
 };
 
 // dichotomy

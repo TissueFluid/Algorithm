@@ -1,6 +1,7 @@
 // Construct Binary Tree from Preorder and Inorder Traversal
 
 #include <vector>
+#include <unordered_map>
 using namespace std;
 
 struct TreeNode {
@@ -12,48 +13,47 @@ struct TreeNode {
 
 class Solution {
 private:
-    TreeNode *helper(vector<int> &preorder,
-                     int preorder_start,
-                     int preorder_end,
-                     vector<int> &inorder,
-                     int inorder_start,
-                     int inorder_end) {
-        if (preorder_start > preorder_end) {
-            return NULL;
+    TreeNode *helper(
+        const vector<int> &preorder,
+        const vector<int> &inorder,
+        const int preStart,
+        const int preEnd,
+        const int inStart,
+        const int inEnd,
+        const unordered_map<int, int> &m) {
+
+        if (preStart >= preEnd || inStart >= inEnd) {
+            return nullptr;
         }
 
-        TreeNode *root = new TreeNode(preorder[preorder_start]);
+        auto root = new TreeNode(preorder[preStart]);
+        auto inRoot = m.at(root->val);
+        auto leftLen = inRoot - inStart;
 
-        int inorder_root_pos = inorder_start;
-
-        while (inorder_root_pos <= inorder_end) {
-            if (inorder[inorder_root_pos] == preorder[preorder_start]) {
-                break;
-            }
-            inorder_root_pos++;
-        }
-
-        int size_left_subtree = inorder_root_pos - inorder_start;
-
-        root->left = helper(preorder,
-                            preorder_start + 1,
-                            preorder_start + size_left_subtree,
-                            inorder,
-                            inorder_start,
-                            inorder_root_pos - 1);
-
-        root->right = helper(preorder,
-                             preorder_start + size_left_subtree + 1,
-                             preorder_end,
-                             inorder,
-                             inorder_root_pos + 1,
-                             inorder_end);
+        root->left = helper(preorder, inorder,
+                            preStart + 1, preStart + 1 + leftLen,
+                            inStart, inRoot,
+                            m);
+        root->right = helper(preorder, inorder,
+                             preStart + 1 + leftLen, preEnd,
+                             inRoot + 1, inEnd,
+                             m);
 
         return root;
     }
 public:
     TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
-        return helper(preorder, 0, preorder.size() - 1,
-                      inorder, 0, inorder.size() - 1);
+        unordered_map<int, int> m;
+
+        int i = 0;
+        for (const auto &item : inorder) {
+            m[item] = i;
+            i++;
+        }
+
+        return helper(preorder, inorder,
+                      0, preorder.size(),
+                      0, inorder.size(),
+                      m);
     }
 };

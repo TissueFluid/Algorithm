@@ -6,48 +6,38 @@
 using namespace std;
 
 class Solution {
-private:
-    bool _isScramble(string s1, string s2) {
-        const int length = s1.length();
-
-        if (length == 1) {
-            return s1[0] == s2[0];
-        }
-
+public:
+    bool isScramble(string s1, string s2) {
         if (s1 == s2) {
             return true;
         }
 
-        for (int i = 1; i < length; ++i) {
-            if (_isScramble(s1.substr(0, i), s2.substr(0, i))
-                && _isScramble(s1.substr(i), s2.substr(i))) {
+        const auto size = s1.length();
+        if (size != s2.length()) {
+            return false;
+        }
+
+        string tmp1(s1);
+        string tmp2(s2);
+
+        sort(tmp1.begin(), tmp1.end());
+        sort(tmp2.begin(), tmp2.end());
+
+        if (tmp1 != tmp2) {
+            return false;
+        }
+
+        for (auto i = 1u; i < size; ++i) {
+            if (isScramble(s1.substr(0, i), s2.substr(0, i))
+                && isScramble(s1.substr(i), s2.substr(i))) {
                 return true;
             }
-
-            if (_isScramble(s1.substr(0, i), s2.substr(length - i))
-                && _isScramble(s1.substr(i), s2.substr(0, length - i))) {
+            if (isScramble(s1.substr(0, i), s2.substr(i))
+                && isScramble(s1.substr(i), s2.substr(0, i))) {
                 return true;
             }
         }
 
         return false;
-    }
-public:
-    /**
-     * @param s1 A string
-     * @param s2 Another string
-     * @return whether s2 is a scrambled string of s1
-     */
-    bool isScramble(string& s1, string& s2) {
-        const int length = s1.length();
-        if (length != s2.length()) {
-            return false;
-        }
-
-        if (length == 0) {
-            return true;
-        }
-
-        return _isScramble(s1, s2);
     }
 };

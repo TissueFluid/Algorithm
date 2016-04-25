@@ -1,6 +1,5 @@
 // Pow(x, n)  O(log(n))
 
-using namespace std;
 
 class Solution {
 private:
@@ -24,16 +23,19 @@ public:
      * @return the result
      */
     double myPow(double x, int n) {
+        double retval; 
         if (n == 0) {
-            return 1;
+            retval = 1;
         }
 
         if (n > 0) {
-            return pow(x, n);
+            retval = pow(x, n);
         }
 
         if (n < 0) {
-            return 1 / (pow(x, -n));
+            retval = 1 / (pow(x, -n));
         }
+
+        return retval;
     }
 };

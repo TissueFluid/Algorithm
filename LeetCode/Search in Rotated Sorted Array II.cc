@@ -1,4 +1,4 @@
-// Search in Rotated Sorted Array II.cc'
+// Search in Rotated Sorted Array II
 
 #include <vector>
 using namespace std;

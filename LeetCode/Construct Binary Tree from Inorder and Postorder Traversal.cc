@@ -1,6 +1,7 @@
 // Construct Binary Tree from Inorder and Postorder Traversal
 
 #include <vector>
+#include <unordered_map>
 using namespace std;
 
 struct TreeNode {
@@ -12,48 +13,36 @@ struct TreeNode {
 
 class Solution {
 private:
-    TreeNode *helper(vector<int> &inorder,
-                     int inorder_start,
-                     int inorder_end,
-                     vector<int> &postorder,
-                     int postorder_start,
-                     int postorder_end) {
-        if (inorder_start > inorder_end) {
-            return NULL;
+    TreeNode *helper(vector<int>::const_iterator inStart,
+                     vector<int>::const_iterator inEnd,
+                     vector<int>::const_iterator postStart,
+                     vector<int>::const_iterator postEnd,
+                     const unordered_map<int, vector<int>::const_iterator > &m) {
+        if (inStart == inEnd || postStart == postEnd) {
+            return nullptr;
         }
 
-        TreeNode *root = new TreeNode(postorder[postorder_end]);
+        auto root = new TreeNode(*(prev(postEnd, 1)));
+        auto inRoot = m.at(root->val);
+        auto leftLen = distance(inStart, inRoot);
 
-        int inorder_root_pos = inorder_start;
-
-        while (inorder_root_pos <= inorder_end) {
-            if (inorder[inorder_root_pos] == postorder[postorder_end]) {
-                break;
-            }
-            inorder_root_pos++;
-        }
-
-        int size_left_subtree = inorder_root_pos - inorder_start;
-
-        root->left = helper(inorder,
-                            inorder_start,
-                            inorder_root_pos - 1,
-                            postorder,
-                            postorder_start,
-                            postorder_start + size_left_subtree - 1);
-
-        root->right = helper(inorder,
-                             inorder_root_pos + 1,
-                             inorder_end,
-                             postorder,
-                             postorder_start + size_left_subtree,
-                             postorder_end - 1);
+        root->left = helper(inStart, inRoot,
+                            postStart, next(postStart, leftLen),
+                            m);
+        root->right = helper(next(inRoot, 1), inEnd,
+                             next(postStart, leftLen), prev(postEnd, 1),
+                             m);
 
         return root;
     }
 public:
     TreeNode* buildTree(vector<int>& inorder, vector<int>& postorder) {
-        return helper(inorder, 0, inorder.size() - 1,
-                      postorder, 0, postorder.size() - 1);
+        unordered_map<int, vector<int>::const_iterator > m;
+        for (auto it = inorder.begin(); it != inorder.end(); ++it) {
+            m[*it] = it;
+        }
+        return helper(inorder.begin(), inorder.end(),
+                      postorder.begin(), postorder.end(),
+                      m);
     }
 };

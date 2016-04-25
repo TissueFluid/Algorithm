@@ -25,7 +25,7 @@ vector<int> nextPermutation(vector<int> &nums) {
     for (min = size - 1; ret[min] <= ret[i-1]; min--);
     swap(ret[i-1], ret[min]);
   }
-  sort(ret.begin() + i, ret.end());
+  reverse(ret.begin() + i, ret.end());
 
   return ret;
 }
